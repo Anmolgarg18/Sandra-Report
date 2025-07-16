@@ -446,13 +446,13 @@
     }
 
     const skillsData = [
-      { label: "BUSINESS & FINANCIAL ACUMEN", description: "Understanding the key forces and dynamics inside and outside AbbVie that guide all decisions.", self: 1.33, manager: 1, benchmark: 2 },
-      { label: "ANALYSIS TO INSIGHTS",description: "Gathering, analyzing and synthesizing data to generate impactful insights that drive action, deepen customer intimacy and fuel curiosity",  self: 1.33, manager: 1, benchmark: 2},
-      { label: "BRAND & PORTFOLIO VALUE",description: "Realizing the full potential of our brands and portfolios using a deep understanding of the market, competition, customers, and clinical value to build a compelling brand story and provide short- and long-term strategic direction",  self: 1.67, manager: 1.6, benchmark: 2.5 },
-      { label: "STAKEHOLDER ALIGNMENT",description: "Building strong relationships with internal stakeholders to exceed shared goals",  self: 1.5, manager: 1.7, benchmark: 2 },
-      { label: "EFFECTIVE STORYTELLING",description: "Inspiring action through compelling narratives that effectively convey value for key stakeholders,including customers, peers and leaders ",  self: 1.53, manager: 1.8, benchmark: 2.5 },
-      { label: "MARKET ACCESS",description: "Understanding market access key stakeholders’ economics and decision making to enable patient access",  self: 1, manager: 1.33, benchmark: 2 },
-      { label: "PERSONALIZED MARKETING",description: "Delivering highly tailored, compelling experiences using real-time data, advanced analytics and AI to reflect customers’ unique preferences and behaviors",  self: 1.4, manager: 1.5, benchmark: 2.5 },
+      { label: "BUSINESS & FINANCIAL ACUMEN", description: "Understanding the key forces and dynamics inside and outside AbbVie that guide all decisions.", self: 2, manager: 0, benchmark: 2 },
+      { label: "ANALYSIS TO INSIGHTS",description: "Gathering, analyzing and synthesizing data to generate impactful insights that drive action, deepen customer intimacy and fuel curiosity",  self: 2.67, manager: 0, benchmark: 2},
+      { label: "BRAND & PORTFOLIO VALUE",description: "Realizing the full potential of our brands and portfolios using a deep understanding of the market, competition, customers, and clinical value to build a compelling brand story and provide short- and long-term strategic direction",  self: 2.5, manager: 0, benchmark: 2.5 },
+      { label: "STAKEHOLDER ALIGNMENT",description: "Building strong relationships with internal stakeholders to exceed shared goals",  self: 3, manager: 0, benchmark: 2 },
+      { label: "EFFECTIVE STORYTELLING",description: "Inspiring action through compelling narratives that effectively convey value for key stakeholders,including customers, peers and leaders ",  self: 2, manager: 0, benchmark: 2.5 },
+      { label: "MARKET ACCESS",description: "Understanding market access key stakeholders’ economics and decision making to enable patient access",  self: 2, manager: 0, benchmark: 2 },
+      { label: "PERSONALIZED MARKETING",description: "Delivering highly tailored, compelling experiences using real-time data, advanced analytics and AI to reflect customers’ unique preferences and behaviors",  self: 2, manager: 0, benchmark: 2.5 },
     ];
 
     const strengths = [
@@ -468,10 +468,10 @@
        { title: "Lifecycle Optimization", description: "Your current focus is brand-specific, with limited visibility into broader franchise or cross-brand planning. There's an opportunity to think more strategically across the portfolio. <br/>Start identifying adjacent brand or franchise synergies that could enhance value. Consider incorporating a cross-brand view into your 1-7-5 planning or collaborating with peers on long-term scenario planning." }
     ];
 
-    const getPosition = (value) => {
-  const clamped = Math.max(1, Math.min(3, value));
-  let percent = (clamped / 3) * 100;
-  if (percent === 100) percent -= 3;
+const getPosition = (value) => {
+  if (value <= 0) return "0%"; // Handle 0 and negatives
+  const clamped = Math.min(3, value);
+  const percent = (clamped / 3) * 100;
   return percent + "%";
 };
 
