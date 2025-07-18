@@ -13,43 +13,48 @@
    <!-- Font Awesome Free -->
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
- 
-  <!-- Configure Tailwind to use Roboto -->
-  <script>
-      tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            roboto: ['"Roboto Condensed"'],
-          }
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Intel+One+Mono:ital,wght@0,300..700;1,300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<!-- Tailwind Font Config -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['"Inria Serif"', 'serif'],
+          mono: ['"Intel One Mono"', 'monospace'],
+          montserrat: ['"Montserrat"', 'sans-serif']
         }
       }
     }
+  }
   </script>
  <script src="https://cdn.tailwindcss.com"></script>
  <script src="https://unpkg.com/alpinejs" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-gray-100  font-roboto">
+<body class="bg-white  font-serif">
   <!-- Header -->
  <header class="bg-white shadow flex justify-between items-center px-6 py-4 fixed top-0 left-0 right-0 z-50">
 
     <div class="flex items-center space-x-4">
       <img src="logo.png" alt="Logo" class="h-5 w-auto object-contain" />
-      <h1 class="text-xl font-bold">Assess.AI</h1>
+      <!-- <h1 class="text-xl font-bold">Assess.AI</h1> -->
     </div>
     <div class="space-x-2">
        <button onclick="downloadModel()" class="border px-4 py-2 text-sm rounded hover:bg-gray-100">Competency Model</button>
-      <button onclick="downloadPDF()" class="border px-4 py-2 text-sm rounded hover:bg-gray-100">Download as PDF</button>
-      <button class="bg-[#071D49] text-white px-4 py-2 text-sm rounded hover:bg-blue-700 disabled">Share Report</button>
+      <!-- <button onclick="downloadPDF()" class="border px-4 py-2 text-sm rounded hover:bg-gray-100">Download as PDF</button>
+      <button class="bg-[#071D49] text-white px-4 py-2 text-sm rounded hover:bg-blue-700 disabled">Share Report</button> -->
     </div>
   </header>
 
   <!-- Main Content -->
- <main class="max-w-[90%] mx-auto pt-24 pb-8" id="pdf-content">
+ <main class="max-w-[80%] mx-auto pt-24 pb-8" id="pdf-content">
 
    <!-- Heading -->
 <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
@@ -76,7 +81,7 @@
  <div id="competency-view">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
       <!-- Skills Assessment -->
-      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-8 col-span-12">
+      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-7 col-span-12">
         <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
           <h3 class="text-2xl text-[#071D49]  font-bold">OVERALL COMPETENCY VIEW</h3>
           <div class="relative flex bg-gray-200 rounded-full p-1 w-max">
@@ -102,8 +107,8 @@
       </div>
 
       <!-- Performance Summary -->
-      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-4 col-span-12">
-        <h3 class="text-2xl text-[#071D49] font-bold mb-4 text-left">OVERALL SUMMARY</h3>
+      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-5 col-span-12">
+        <h3 class="text-xl text-[#071D49] font-bold mb-4 text-left">OVERALL SUMMARY</h3>
         <p class="text-sm  mb-2">
          You’ve shown strong marketing leadership grounded in a clear understanding of your customer and market environment. Your ability to gather insights, respond decisively to competitive threats, and align cross-functional teams highlights your strength in both strategic thinking and agile execution. You effectively translate field and HCP feedback into impactful action, equipping your teams with the tools and messaging they need to build credibility and engagement.
         </p>
@@ -123,7 +128,7 @@
     <div class="flex flex-col md:flex-row items-start gap-6 mt-6">
       <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
         <button id="accordion-toggle-strengths" class="w-full flex justify-between items-center text-lg font-semibold text-left focus:outline-none" onclick="toggleAccordion('strengths')">
-          <span class="text-2xl text-[#071D49] font-bold">TOP STRENGTHS</span>
+          <span class="text-xl text-[#071D49] font-bold">KEY STRENGTHS</span>
           <svg id="accordion-arrow-strengths" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
@@ -133,7 +138,7 @@
 
       <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
         <button id="accordion-toggle-development" class="w-full flex justify-between items-center text-lg font-semibold text-left focus:outline-none" onclick="toggleAccordion('development')">
-          <span class="text-[#071D49] text-2xl font-bold">DEVELOPMENT PRIORITIES</span>
+          <span class="text-[#071D49] text-xl font-bold">DEVELOPMENT PRIORITIES</span>
           <svg id="accordion-arrow-development" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
@@ -145,7 +150,7 @@
     <!-- learining -->
       <div class="mx-auto bg-white p-6 mt-5 rounded-lg shadow">
     <div class="flex justify-between items-center mb-1">
-      <h1 class="text-2xl font-bold text-[#071D49]">Your Learning Recommendations</h1>
+      <h1 class="text-2xl font-bold text-[#071D49]">Your Learning Recommendations (For Illustration Only)</h1>
       <button class="bg-[#071D49] text-white px-4 py-2 rounded hover:bg-blue-800 hidden">Select Team member</button>
     </div>
     <p class="mb-6  text-sm">
@@ -308,7 +313,7 @@
           score: '2.3/3',
           narrative: `You are a connector and integrator across functions, enabling unified execution. Your ability to lead alignment efforts across Brand Teams and external partners drives strategic cohesion.`,
           subcompetencies: [
-           { title: 'Matrix Working', score: '3/3', self: '1', manager: '0', selfWidth: '33%', managerWidth: '0%',feedback: 'You coordinated early with MedReg and agency partners to align launch timelines and avoid roadblocks. Your use of RACI and team charters helped foster clarity, accountability, and proactive conflict resolution across functions. <br/>To deepen your matrix influence, consider strengthening your role in shaping upstream strategy discussions. Lean into early planning moments to co-create solutions with cross-functional leads, especially when navigating ambiguous priorities.' },
+           { title: 'Matrix Working', score: '3/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You coordinated early with MedReg and agency partners to align launch timelines and avoid roadblocks. Your use of RACI and team charters helped foster clarity, accountability, and proactive conflict resolution across functions. <br/>To deepen your matrix influence, consider strengthening your role in shaping upstream strategy discussions. Lean into early planning moments to co-create solutions with cross-functional leads, especially when navigating ambiguous priorities.' },
            { title: 'Cross-Functional Collaboration', score: '3/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'You maintained visibility on upcoming workload for MedReg and worked closely with your agency to align on content readiness at NOC. This ensured high-quality outputs on time, minimizing risk and enabling rapid execution.<br/>To optimize agency collaboration, consider building in more structured feedback loops post-launch. Identifying what worked well—or where adaptations were needed—can help evolve future content development processes and agency efficiency.' },
 { title: 'Agency Collaboration', score: '3/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You maintained visibility on upcoming workload for MedReg and worked closely with your agency to align on content readiness at NOC. This ensured high-quality outputs on time, minimizing risk and enabling rapid execution. <br/>	To optimize agency collaboration, consider building in more structured feedback loops post-launch. Identifying what worked well—or where adaptations were needed—can help evolve future content development processes and agency efficiency.' }
             
@@ -454,7 +459,7 @@
       { label: "BUSINESS & FINANCIAL ACUMEN", description: "Understanding the key forces and dynamics inside and outside AbbVie that guide all decisions.", self: 2, manager: 0, benchmark: 2 },
       { label: "ANALYSIS TO INSIGHTS",description: "Gathering, analyzing and synthesizing data to generate impactful insights that drive action, deepen customer intimacy and fuel curiosity",  self: 2.67, manager: 0, benchmark: 2},
       { label: "BRAND & PORTFOLIO VALUE",description: "Realizing the full potential of our brands and portfolios using a deep understanding of the market, competition, customers, and clinical value to build a compelling brand story and provide short- and long-term strategic direction",  self: 2.5, manager: 0, benchmark: 2.5 },
-      { label: "STAKEHOLDER ALIGNMENT",description: "Building strong relationships with internal stakeholders to exceed shared goals",  self: 1.3, manager: 0, benchmark: 2 },
+      { label: "STAKEHOLDER ALIGNMENT",description: "Building strong relationships with internal stakeholders to exceed shared goals",  self: 2, manager: 0, benchmark: 2 },
       { label: "EFFECTIVE STORYTELLING",description: "Inspiring action through compelling narratives that effectively convey value for key stakeholders,including customers, peers and leaders ",  self: 1.3, manager: 0, benchmark: 2.5 },
       { label: "MARKET ACCESS",description: "Understanding market access key stakeholders’ economics and decision making to enable patient access",  self: 1.3, manager: 0, benchmark: 2 },
       { label: "PERSONALIZED MARKETING",description: "Delivering highly tailored, compelling experiences using real-time data, advanced analytics and AI to reflect customers’ unique preferences and behaviors",  self: 1.3, manager: 0, benchmark: 2.5 },
@@ -492,8 +497,8 @@ const getPosition = (value) => {
     <div class="col-span-2"></div>
     <div class="col-span-4 relative h-5">
       <div class="absolute top-0 left-0 w-full flex justify-between text-center font-semibold text-sm text-gray-600">
-        <div class="w-1/3">Foundational</div>
-        <div class="w-1/3">Advanced</div>
+        <div class="w-1/4">Foundational</div>
+        <div class="w-1/2">Advanced</div>
         <div class="w-1/3">Mastery</div>
       </div>
     </div>
@@ -620,7 +625,7 @@ labelWrapper.appendChild(groupContainer);
   const container = document.getElementById(containerId);
   data.forEach(item => {
     const div = document.createElement("div");
-    div.className = "bg-blue-50 border-l-4 border-[#071D49] p-4 rounded relative";
+    div.className = " border-l-4 border-[#071D49] px-4 py-2 rounded relative";
 
     // Convert <br/> string into list items
     const bulletPoints = item.description
@@ -629,12 +634,16 @@ labelWrapper.appendChild(groupContainer);
       .join('');
 
     div.innerHTML = `
-      <div class="flex justify-between items-center mb-1">
-        <span class="font-medium text-[#071D49]">${item.title} - ${item.competency}</span>
-      </div>
-      <ul class="text-gray-600 text-sm mt-1 list-disc ml-5">
-        ${bulletPoints}
-      </ul>
+     <div class="flex justify-between items-center mb-1">
+  <div class="flex flex-col">
+     <span class="text-[10px]  font-bold text-gray-500">${item.competency.toUpperCase()}</span>
+    <span class="font-medium text-[#071D49]">${item.title}</span>
+  </div>
+</div>
+<ul class="text-gray-600 text-sm mt-1 list-disc ml-5">
+  ${bulletPoints}
+</ul>
+
     `;
 
     container.appendChild(div);
