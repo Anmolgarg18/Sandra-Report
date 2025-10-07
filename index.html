@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OVERALL COMPETENCY VIEW</title>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+   <!-- Font Awesome Free -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inria+Serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Intel+One+Mono:ital,wght@0,300..700;1,300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<!-- Tailwind Font Config -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['"Inria Serif"', 'serif'],
+          mono: ['"Intel One Mono"', 'monospace'],
+          montserrat: ['"Montserrat"', 'sans-serif']
+        }
+      }
+    }
+  }
+  </script>
+ <script src="https://cdn.tailwindcss.com"></script>
+ <script src="https://unpkg.com/alpinejs" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-white font-serif">
+  <!-- Header -->
+ <header class="bg-white shadow flex justify-between items-center px-6 py-4 fixed top-0 left-0 right-0 z-50">
+
+    <div class="flex items-center space-x-4">
+      <img src="logo.png" alt="Logo" class="h-5 w-auto object-contain" />
+      <!-- <h1 class="text-xl font-bold">Assess.AI</h1> -->
+    </div>
+    <div class="space-x-2">
+       <button onclick="downloadModel()" class="border px-4 py-2 text-sm rounded hover:bg-gray-100">Competency Model</button>
+      <!-- <button onclick="downloadPDF()" class="border px-4 py-2 text-sm rounded hover:bg-gray-100">Download as PDF</button>
+      <button class="bg-[#071D49] text-white px-4 py-2 text-sm rounded hover:bg-blue-700 disabled">Share Report</button> -->
+    </div>
+  </header>
+
+  <!-- Main Content -->
+ <main class="max-w-[80%] mx-auto pt-24 pb-8" id="pdf-content">
+
+   <!-- Heading -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+  <h2 class=" mb-4 md:mb-0 text-sm">
+    <span class="text-2xl font-bold text-[#0066F5]">Hey Sandra Henein,</span> <br> Here is your personalized report. Toggle between <span class="font-bold text-[#071D49]">"Competency View and Detailed View"</span>  to dive deeper.
+  </h2>
+
+  <!-- Toggle -->
+<div class="relative flex bg-gray-200 rounded-full p-1  shadow w-[250px] h-[40px]">
+
+  <!-- Sliding background -->
+  <div id="view-slider" class="absolute top-1 left-1 bg-[#071D49] text-[#ffffff] rounded-full shadow transition-all duration-300 h-[33px] w-1/2"></div>
+
+  <!-- Buttons -->
+  <button id="CompetencyBtn" onclick="switchView('competency')" class="relative  flex flex-1 px-2 py-1 text-xs justify-center items-center rounded-full text-white font-bold z-10">
+    Competency View
+  </button>
+  <button id="DetailedBtn" onclick="switchView('detailed')" class="relative flex flex-1 px-2 py-1 text-xs justify-center items-center rounded-full text-black font-bold z-10">
+    Detailed View
+  </button>
+</div>
+
+</div>
+ <div id="competency-view">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <!-- Skills Assessment -->
+      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-7 col-span-12">
+        <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+          <h3 class="text-2xl text-[#071D49]  font-bold">OVERALL COMPETENCY VIEW</h3>
+          <div class="relative flex bg-gray-200 rounded-full p-1 w-max">
+            <div id="slider" class="absolute top-1 left-1 bg-[#071D49] rounded-full shadow transition-all duration-300 h-[32px]"></div>
+            <button id="barBtn" onclick="switchChart('bar')" class="relative px-4 py-1 text-sm rounded-full text-white font-medium z-10">Bar Chart</button>
+            <button id="radarBtn" onclick="switchChart('radar')" class="relative px-4 py-1 text-sm rounded-full text-black font-medium z-10">Radar Chart</button>
+          </div>
+        </div>
+
+        <div id="legends" class="flex items-center justify-end space-x-4 mt-[30px] mb-2" >
+          <span class="text-[#8A2ECC] text-sm">● Self</span>
+          <span class="text-[#071D49] text-sm">● Manager</span>
+          <!-- <span class="text-[#0066F5] text-sm"><span class="inline-block w-2.5 h-1.5 bg-[#0066F5] mr-1.5 rotate-90"></span> Role Benchmark</span> -->
+        </div>
+
+        <!-- Chart Containers -->
+        <div id="accordion-content-skills" class="transition-all duration-300 ease-in-out">
+          <div id="skills-container" class="space-y-6 text-sm relative"></div>
+          <div id="radarContainer" class="hidden w-[500px] h-[400px] mx-auto">
+            <canvas id="radarChart" class="w-full h-full"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Summary -->
+      <div class="bg-white p-6 rounded-lg shadow-md md:col-span-5 col-span-12">
+        <h3 class="text-xl text-[#071D49] font-bold mb-4 text-left">OVERALL SUMMARY</h3>
+        <p class="text-sm  mb-2">
+         You’ve shown strong marketing leadership grounded in a clear understanding of your customer and market environment. Your ability to gather insights, respond decisively to competitive threats, and align cross-functional teams highlights your strength in both strategic thinking and agile execution. You effectively translate field and HCP feedback into impactful action, equipping your teams with the tools and messaging they need to build credibility and engagement.
+        </p>
+        <p class="text-sm  mb-2">
+        Your use of data to guide decision-making—particularly around investment shifts based on performance metrics—reflects commercial acumen and adaptability. Your commitment to refining segmentation, validating local realities, and tailoring messaging by audience demonstrates your focus on personalization and continuous improvement. You also lead with structure and clarity, using tools like RACI and LRT to proactively align stakeholders and drive launch readiness.
+        </p>
+        <p class="text-sm mb-2">
+         To further elevate your impact, consider enhancing the speed and scalability of your personalized content across channels, especially within compliant frameworks. Expanding your influence beyond brand-level tactics to portfolio-level strategy will also strengthen your strategic contribution. You have the mindset, tools, and behaviors in place—now it’s about scaling what works and driving even broader business value.
+        </p>
+        
+    
+    
+    </div>
+    </div>
+
+    <!-- Accordions -->
+    <div class="flex flex-col md:flex-row items-start gap-6 mt-6">
+      <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
+        <button id="accordion-toggle-strengths" class="w-full flex justify-between items-center text-lg font-semibold text-left focus:outline-none" onclick="toggleAccordion('strengths')">
+          <span class="text-xl text-[#071D49] font-bold">KEY STRENGTHS</span>
+          <svg id="accordion-arrow-strengths" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="accordion-content-strengths" class="mt-4 space-y-4 transition-all duration-300 ease-in-out"></div>
+      </div>
+
+      <div class="bg-white p-6 rounded-lg shadow-md w-full md:w-1/2">
+        <button id="accordion-toggle-development" class="w-full flex justify-between items-center text-lg font-semibold text-left focus:outline-none" onclick="toggleAccordion('development')">
+          <span class="text-[#071D49] text-xl font-bold">DEVELOPMENT PRIORITIES</span>
+          <svg id="accordion-arrow-development" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="accordion-content-development" class="mt-4 space-y-4 transition-all duration-300 ease-in-out"></div>
+      </div>
+    </div>
+
+    <!-- learining -->
+     
+      <div class="mx-auto bg-white p-6 mt-5 rounded-lg shadow">
+    <div class="flex justify-between items-center mb-1">
+      <h1 class="text-2xl font-bold text-[#071D49]">Next Steps :</h1>
+     
+    </div>
+  <ol class="list-decimal list-inside text-md text-gray-700 mb-6 space-y-2">
+  <li>Thoughtfully review your self-assessment and your manager's assessment.</li>
+  <li>Identify areas of development and discuss them with your manager.</li>
+  <li>
+    Create a plan for closing the gap, which can include:
+    <ul class="list-disc list-inside pl-6 mt-2 space-y-1">
+      <li>Modules from the Academy (speak to your Learning Partner or visit the Academy)</li>
+      <li>Courses outside of the Academy, including LDP or LinkedIn Learning</li>
+      <li>Special projects and development opportunities within the flow of work.</li>
+    </ul>
+  </li>
+</ol>
+
+  </div>
+     
+    </div>
+    <div id="detailed-view" class="hidden"> 
+     <div class="max-w-full mx-auto">
+    <h2 class="text-2xl text-[#071D49] font-bold mb-6">Detailed Competency Overview</h2>
+
+    <div x-data="{ openIndex: null }">
+      <!-- Accordion Items Start -->
+      <template x-for="(item, index) in [
+        {logo: './images/business.png',
+          title: 'Business & Financial Acumen',
+          score: '1.67/3',
+          narrative: `You apply a good understanding of profitability and planning processes in real-world scenarios. With deeper strategic exposure and a stronger investment mindset, you can enhance your influence on brand and business direction.`,
+          subcompetencies: [
+            { title: 'External Influences', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You regularly monitor competitive intelligence sources and regulatory data, and you proactively prepare the brand for potential threats through strategic exercises like war gaming. <br/> To deepen impact, consider formalizing scenario planning into your routine brand planning to stay ahead of emerging shifts more systematically.' },
+            { title: 'Planning approach', score: '3/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'You proactively adjusted your brand strategy based on market performance and competitor misinformation. By engaging the field team and medical to address concerns, you demonstrated sharp strategic judgment rooted in business context and customer feedback. <br/>To further elevate your financial acumen, consider deeper involvement in forecasting and investment modeling. Strengthening your understanding of long-range planning and cross-functional budget impact will support more strategic trade-off decisions in the future.' },
+            { title: 'Financial Acumen', score: '1/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You effectively use KPIs to evaluate investments and reallocate resources when necessary, demonstrating sound financial judgment. <br/>Build a more consistent approach to forecasting and long-term investment modeling to complement your responsive financial decisions.' },
+            
+          ]
+        },
+        {logo: './images/Analysis.png',
+          title: 'Analysis to Insights',
+          score: '1.67/3',
+          narrative: `You have developed strong analytical acumen and use insights to inform marketing decisions. Strengthening your predictive analytics and visualization skills will further boost cross-functional impact.`,
+          subcompetencies: [
+          { title: 'Patient and Customer Centricity', score: '1.5/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: ' You’ve shown strong initiative in gathering local insights and using field feedback to refine customer segments and guide engagement. <br/>Establish a structured rhythm for re-validating these segments regularly with advisors to keep them aligned with market behavior.' },  
+            { title: 'Data & Analytical Literacy', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You synthesize qualitative and quantitative inputs effectively and validate insights through HCP feedback, ensuring grounded decision-making. <br/>Strengthen your use of advanced analytics platforms and data visualization tools to elevate how insights are shared and used in planning.' },
+            { title: 'Data-Informed Decision Making', score: '3/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'Your use of KPIs like engagement, views, and HCP reach allows you to make agile investment decisions and adjust tactics based on what’s working.<br/>Continue integrating these insights earlier into the brand planning process to make data a proactive driver of strategy—not just a diagnostic.' },
+            
+          ]
+        },
+        {logo: './images/Brandport.png',
+          title: 'Brand & Portfolio Value',
+          score: '2.17/3',
+          narrative: `You develop compelling, cohesive brand narratives and guide portfolio-level strategy. Your strategic clarity and cross-brand vision ensure sustainable success in a competitive market.`,
+          subcompetencies: [
+          { title: 'Strategic Choices', score: '2/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'You regularly revisit and refine strategy based on adoption ladder insights and field realities, showing responsiveness to market dynamics. <br/>Broaden your strategic lens to include scenario-based thinking and long-range implications across functions and segments.' },
+           { title: 'Compelling Brand Story', score: '2/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'You created highly targeted patient profiles to clarify differentiation and align messaging with patient outcomes. This reinforced your brand’s unique value and directly supported improved market positioning through credible, relevant storytelling. <br/>To strengthen your long-term brand strategy, look for ways to evolve your value story as external dynamics shift. Regularly refreshing the brand narrative with updated RWE or competitor insights can sustain engagement and protect differentiation.' },  
+          { title: 'Lifecycle Optimization', score: '3/3', self: '1', manager: '0', selfWidth: '33%', managerWidth: '0%',feedback: 'You demonstrate strong tactical execution at the brand level and deliver clear, action-oriented plans.<br/>Look for ways to think beyond the brand by identifying cross-brand or franchise-level synergies that could drive broader strategic value.' },
+           
+          ]
+        },
+        {logo: './images/stakeholder.png',
+          title: 'Stakeholder Alignment',
+          score: '2.3/3',
+          narrative: `You are a connector and integrator across functions, enabling unified execution. Your ability to lead alignment efforts across Brand Teams and external partners drives strategic cohesion.`,
+          subcompetencies: [
+           { title: 'Matrix Working', score: '3/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You coordinated early with MedReg and agency partners to align launch timelines and avoid roadblocks. Your use of RACI and team charters helped foster clarity, accountability, and proactive conflict resolution across functions. <br/>To deepen your matrix influence, consider strengthening your role in shaping upstream strategy discussions. Lean into early planning moments to co-create solutions with cross-functional leads, especially when navigating ambiguous priorities.' },
+           { title: 'Cross-Functional Collaboration', score: '3/3', self: '3', manager: '0', selfWidth: '100%', managerWidth: '0%',feedback: 'You maintained visibility on upcoming workload for MedReg and worked closely with your agency to align on content readiness at NOC. This ensured high-quality outputs on time, minimizing risk and enabling rapid execution.<br/>To optimize agency collaboration, consider building in more structured feedback loops post-launch. Identifying what worked well—or where adaptations were needed—can help evolve future content development processes and agency efficiency.' },
+{ title: 'Agency Collaboration', score: '3/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You maintained visibility on upcoming workload for MedReg and worked closely with your agency to align on content readiness at NOC. This ensured high-quality outputs on time, minimizing risk and enabling rapid execution. <br/>	To optimize agency collaboration, consider building in more structured feedback loops post-launch. Identifying what worked well—or where adaptations were needed—can help evolve future content development processes and agency efficiency.' }
+            
+          ]
+        },
+        {logo: './images/story.png',
+          title: 'Effective Storytelling',
+          score: '1.67/3',
+          narrative: `You inspire through powerful storytelling that drives alignment and action. Your ability to craft high-impact narratives strengthens AbbVieâ€™s presence across internal and external stakeholders.`,
+          subcompetencies: [
+          { title: 'Compelling Connections', score: '2.5/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You use personal stories, emotion, and humor effectively to engage internal audiences and drive message retention. <br/>Aim for more consistent narrative structure across your presentations to reinforce clarity and improve message flow.' },
+          { title: 'Powerful Narratives', score: '2.5/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You effectively used personal stories and emotion to inspire action and bring clarity to complex topics. Your IKEA analogy was memorable and motivational, strengthening the team`s planning mindset with humor and relatability.<br/>To increase the long-term impact of your narratives, try building follow-up mechanisms into your presentations. Tracking how key messages translate into behavior change will help refine your storytelling craft and elevate leadership influence.' },
+          { title: 'Driving Impact', score: '3/3', self: '1', manager: '0', selfWidth: '33%', managerWidth: '0%',feedback: 'You incorporate feedback from the field to refine messaging and ensure scientific alignment with the brand story.<br/>Explore mechanisms to measure long-term storytelling impact, such as HCP behavior shifts or recall in follow-up discussions.' },
+          ]
+        },
+        {logo: './images/market.png',
+          title: 'Market Access',
+          score: '2/3',
+          narrative: `You integrate access requirements into your marketing thinking and strategy design. Enhancing value communication with tailored messaging will further support patient access outcomes.`,
+          subcompetencies: [
+           { title: 'Market Access Stakeholders Impact', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: ' You collaborate closely with access teams and integrate feedback to anticipate and address stakeholder needs proactively. <br/>Deepen your use of payer segmentation and develop early insights into contracting implications during strategy development.' },
+            { title: 'Pricing and Distribution', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You act quickly when access or reimbursement issues are flagged, creating tools like FAQs to support field conversations. <br/>Enhance forward planning around access barriers by forecasting potential payer and policy constraints earlier in the planning cycle.' }
+          
+          ]
+        },
+          {logo: './images/Personal.png',
+          title: 'Personalized Marketing',
+          score: '1.83/3',
+          narrative: `You design data-driven journeys and deliver impactful experiences using analytics. Continue evolving your test-and-learn mindset and scaling personalization for greater value.`,
+          subcompetencies: [
+            { title: 'Audience Targeting', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You recognized that global segmentation wasn’t aligned with local realities and initiated a data-backed refinement process.<br/>Focus on accelerating implementation of validated segments and embedding them into omnichannel targeting for greater precision.' },
+            { title: 'Personalized Content and Channel', score: '1.5/3', self: '1', manager: '0', selfWidth: '33%', managerWidth: '0%',feedback: ' You’ve worked efficiently with MedReg and leveraged low-risk digital tools to speed up internal approvals.<br/>Look for ways to increase content agility and scale personalization across channels while maintaining compliance standards.' },
+            { title: 'Customer Centric Experiences ', score: '2/3', self: '2', manager: '0', selfWidth: '66%', managerWidth: '0%',feedback: 'You are using NBA (Next Best Action) to tailor customer journeys in real time and improve content sequencing based on engagement signals.<br/>Enhance automation and A/B testing to fine-tune journey orchestration and maximize value from each HCP interaction.' }
+          ]
+        }
+      ]" :key="index">
+        <div class="bg-white rounded-lg shadow-sm mb-4 border">
+          <button
+  class="w-full flex justify-between items-center p-4"
+  @click="openIndex === index ? openIndex = null : openIndex = index"
+>
+  <div class="flex items-center space-x-4">
+    <!-- Dynamic logo binding with Alpine.js -->
+    <img :src="item.logo" :alt="item.title + ' logo'" class="w-[60px] h-[60px] object-contain me-[10px]" />
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800" x-text="item.title"></h3>
+      <p class="text-sm text-gray-500 text-left">
+        <!-- Overall Score: <span x-text="item.score"></span> -->
+      </p>
+    </div>
+  </div>
+  <div class="text-gray-400 text-xl" x-text="openIndex === index ? '▲' : '▼'"></div>
+</button>
+
+
+          <div x-show="openIndex === index" x-transition class="p-6 border-t bg-gray-50">
+            
+
+            <!-- <h4 class="font-semibold text-gray-700 mb-4">Subcompetencies</h4> -->
+              <div class="grid md:grid-cols-3 gap-4">
+  <template x-for="(sub, i) in item.subcompetencies" :key="i">
+    <div class="bg-white rounded-lg border p-4 shadow-sm">
+      <h5 class="font-semibold text-gray-800" x-text="sub.title"></h5>
+
+      <div class="text-sm text-gray-600 mt-2">Self </div>
+      <div class="w-full h-2 bg-gray-200 rounded relative">
+        <!-- Progress -->
+        <div class="bg-[#8A2ECC] h-2 rounded" :style="'width: ' + sub.selfWidth"></div>
+
+        <!-- Separators -->
+        <div class="absolute top-0 left-1/3 h-2 w-[2px] bg-white"></div>
+        <div class="absolute top-0 left-2/3 h-2 w-[2px] bg-white"></div>
+      </div>
+
+      <div class="text-sm text-gray-600 mt-2">Manager </div>
+      <div class="w-full h-2 bg-gray-200 rounded relative">
+        <!-- Progress -->
+        <div class="bg-[#071D49] h-2 rounded" :style="'width: ' + sub.managerWidth"></div>
+
+        <!-- Separators -->
+        <div class="absolute top-0 left-1/3 h-2 w-[2px] bg-white"></div>
+        <div class="absolute top-0 left-2/3 h-2 w-[2px] bg-white"></div>
+      </div>
+    </div>
+  </template>
+</div>
+            <!-- <h4 class="font-semibold text-gray-700 mt-4 mb-2">Competency Feedback</h4>
+            <p class="text-gray-300 mb-6" x-text="item.narrative"></p> -->
+            <template x-for="sub in item.subcompetencies" :key="sub.title">
+  <div class="my-4">
+    <h5 class="font-medium text-gray-700" x-text="sub.title"></h5>
+   <ul class="text-gray-600 text-sm mt-1" x-show="sub.feedback" x-html="sub.feedback.split('<br/>').map(p => `<li class='list-disc ml-5'>${p}</li>`).join('')"></ul>
+  </div>
+</template>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+  </main>
+
+  <script>
+    const slider = document.getElementById('slider');
+    const barBtn = document.getElementById('barBtn');
+    const radarBtn = document.getElementById('radarBtn');
+    
+    let activeChart = '';
+    let radarChart;
+
+    window.onload = () => {
+      activeChart = 'bar';
+      updateSlider(barBtn);
+      renderSkills();
+    };
+
+    function switchChart(type) {
+      if (type === activeChart) return;
+      activeChart = type;
+
+      if (type === 'bar') {
+        updateSlider(barBtn);
+        document.getElementById('skills-container').innerHTML = '';  // Clear previous bar graph
+        document.getElementById('skills-container').style.display = 'block';
+        document.getElementById('radarContainer').style.display = 'none';
+        barBtn?.classList.add("text-white");
+ radarBtn?.classList.remove("text-white")
+        renderSkills();
+      } else {
+        updateSlider(radarBtn);
+        document.getElementById('skills-container').style.display = 'none';
+        document.getElementById('radarContainer').style.display = 'block';
+        barBtn?.classList.remove("text-white");
+    barBtn?.classList.add("text-black");
+    radarBtn?.classList.add("text-white")
+        renderRadarChart();
+      }
+    }
+
+    function updateSlider(targetBtn) {
+      slider.style.width = targetBtn.offsetWidth + 'px';
+      slider.style.left = targetBtn.offsetLeft + 'px';
+      slider.style.top = targetBtn.offsetTop + 'px';
+      slider.style.height = targetBtn.offsetHeight + 'px';
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById("pdf-content");
+      const opt = { margin: 0.5, filename: 'Overall_Competency_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: [14, 12], orientation: 'portrait' } };
+      html2pdf().from(element).set(opt).save();
+    }
+
+    const skillsData = [
+      { label: "BUSINESS & FINANCIAL ACUMEN", description: "Understanding the key forces and dynamics inside and outside AbbVie that guide all decisions.", self: 2, manager: 0, benchmark: 2 },
+      { label: "ANALYSIS TO INSIGHTS",description: "Gathering, analyzing and synthesizing data to generate impactful insights that drive action, deepen customer intimacy and fuel curiosity",  self: 2.67, manager: 0, benchmark: 2},
+      { label: "BRAND & PORTFOLIO VALUE",description: "Realizing the full potential of our brands and portfolios using a deep understanding of the market, competition, customers, and clinical value to build a compelling brand story and provide short- and long-term strategic direction",  self: 2.5, manager: 0, benchmark: 2.5 },
+      { label: "STAKEHOLDER ALIGNMENT",description: "Building strong relationships with internal stakeholders to exceed shared goals",  self: 2, manager: 0, benchmark: 2 },
+      { label: "EFFECTIVE STORYTELLING",description: "Inspiring action through compelling narratives that effectively convey value for key stakeholders,including customers, peers and leaders ",  self: 1.3, manager: 0, benchmark: 2.5 },
+      { label: "MARKET ACCESS",description: "Understanding market access key stakeholders’ economics and decision making to enable patient access",  self: 1.9, manager: 0, benchmark: 2 },
+      { label: "PERSONALIZED MARKETING",description: "Delivering highly tailored, compelling experiences using real-time data, advanced analytics and AI to reflect customers’ unique preferences and behaviors",  self: 1.3, manager: 0, benchmark: 2.5 },
+    ];
+
+    const strengths = [
+      { title: "Data Informed Decision Making",competency:'Analysis to Insights', description: "You consistently use performance data—like open rates, leads, and HCP reach—to guide your investment choices and adjust tactics. Your decision to shift resources from lower-performing channels to higher-impact tactics shows clear commercial agility and responsiveness. <br/> Keep embedding real-time KPIs into your brand planning cycles. Consider sharing your approach with peers or integrating it into quarterly review forums to help elevate data-driven thinking across teams." },
+      { title: "Cross-Functional Collaboration",competency:'Stakeholder Alignment', description: "You’ve shown strong leadership in aligning MedReg, marketing, and agency teams—especially during high-pressure situations like launches. Your use of tools like RACI and LRT helped you streamline workflows and avoid critical delays. <br/> Continue role-modeling this structured collaboration. You could take it further by mentoring peers on matrix working or by leading pre-launch alignment sessions that codify your successful practices." },
+      { title: "Patient and Customer Centricity",competency:'Analysis to Insights', description: "You took clear ownership of refining customer segmentation when the global model didn’t fit local realities. Your use of typing tools, field feedback, and investment in a segmentation study reflect a thoughtful, insight-led approach.<br/> Maintain this commitment by building a regular rhythm for validation with field teams and HCP advisors. Sharing the impact of these refinements through storytelling or engagement data will further strengthen credibility." },
+     
+    ];
+
+    const development = [
+      { title: "Driving Impact",competency:'Effective Storytelling', description: "	To further enhance your ability to drive consistent and measurable marketing impact, systematically implement structured KPI frameworks and regular strategic impact reviews across all marketing initiatives. Establish detailed performance tracking dashboards that combine qualitative insights from field teams, real-time digital analytics, and strategic adoption indicators. Use these dashboards to quickly recalibrate tactical plans, optimize resource allocation, and refine messaging based on evolving HCP behaviors and market conditions.  <br/>Strengthening your data-informed execution practices will empower you to proactively identify opportunities and risks, accelerate tactical responsiveness, and ensure continuous optimization, ultimately driving even stronger, more consistent strategic impact across your brand and portfolio efforts." },
+      { title: "Personalized Content and Channel",competency:'Personalized Marketing', description: "You’re leveraging low-risk digital tools to speed up content delivery, but adapting content quickly across channels—while staying compliant—remains a challenge. <br/>Explore ways to scale modular content and standardize internal MedReg alignment early in the development process. Partner with your agency and review team to pilot pre-approved content that allows for faster personalization." },
+       { title: "Lifecycle Optimization",competency:'Brand and Portfolio Value', description: "Your current focus is brand-specific, with limited visibility into broader franchise or cross-brand planning. There's an opportunity to think more strategically across the portfolio. <br/>Start identifying adjacent brand or franchise synergies that could enhance value. Consider incorporating a cross-brand view into your 1-7-5 planning or collaborating with peers on long-term scenario planning." }
+    ];
+
+const getPosition = (value) => {
+  if (value <= 0) return "0%"; // Handle 0 and negatives
+  const clamped = Math.min(3, value);
+  const percent = (clamped / 3) * 100;
+  return percent + "%";
+};
+
+
+   function renderSkills() {
+  const container = document.getElementById("skills-container");
+  container.innerHTML = ""; // Clear previous content if any
+
+  // Add the scale header row
+  const scaleRow = document.createElement("div");
+  scaleRow.className = "grid grid-cols-6 gap-4 mb-4 text-xs text-gray-500 px-1 mt-[50px]";
+  scaleRow.innerHTML = `
+    <div class="col-span-2"></div>
+    <div class="col-span-4 relative h-5">
+      <div class="absolute top-0 left-0 w-full flex justify-between text-center font-semibold text-sm text-gray-600">
+        <div class="w-1/4">Foundational</div>
+        <div class="w-1/2">Advanced</div>
+        <div class="w-1/3">Mastery</div>
+      </div>
+    </div>
+  `;
+  container.appendChild(scaleRow);
+
+  // Vertical benchmark guide lines (if needed)
+  const verticalLines = document.createElement("div");
+  verticalLines.className = "absolute top-0 left-0 w-full h-full pointer-events-none z-20";
+  verticalLines.innerHTML = `
+    <div class="absolute top-[-20px] bottom-[10px] w-px border-l border-dotted border-gray-400" style="left: 55%; "></div> 
+    <div class="absolute top-[-20px] bottom-[10px] w-px border-l border-dotted border-gray-400" style="left: 76%;"></div>
+  `;
+  container.appendChild(verticalLines);
+
+  // Loop through skills data
+  skillsData.forEach(skill => {
+    const row = document.createElement("div");
+    row.className = "grid grid-cols-6 gap-4 items-center mb-4";
+
+    // Skill label with hover description
+   // Label wrapper with bottom border
+const labelWrapper = document.createElement("div");
+labelWrapper.className = "col-span-2 border-b border-gray-200 pb-2";
+
+// Create a group container for hover behavior
+const groupContainer = document.createElement("div");
+
+
+// Flex row for label and icon
+const labelRow = document.createElement("div");
+labelRow.className = "flex items-center justify-between";
+
+// Label text
+const label = document.createElement("div");
+label.className = "font-medium text-[#948979]";
+label.textContent = skill.label;
+
+// Feather 'info' icon (larger, hover-enabled)
+const infoIcon = document.createElement("div");
+infoIcon.className = "relative group cursor-pointer";
+infoIcon.innerHTML = `
+ <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill text-gray-300" viewBox="0 0 16 16">
+  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+</svg>
+`;
+
+// Description tooltip (full-width, appears below on hover)
+const description = document.createElement("div");
+description.className = `
+  absolute hidden group-hover:block
+  left-0 top-[150%] z-50
+  min-w-[200px] max-w-xs
+  bg-white text-gray-700 text-xs rounded shadow-lg px-3 py-2
+  whitespace-pre-wrap
+`;
+
+description.textContent = skill.description || "";
+
+// Assemble structure
+labelRow.appendChild(label);
+labelRow.appendChild(infoIcon);
+groupContainer.appendChild(labelRow);
+infoIcon.appendChild(description); // now a child of the icon container
+labelWrapper.appendChild(groupContainer);
+
+    // Skill graph with bars and benchmark line
+    const graph = document.createElement("div");
+    graph.className = "col-span-4 relative h-6 bg-gray-100 rounded";
+
+    graph.innerHTML = `
+      <!-- Self Bar -->
+      <div class="absolute top-[10%] left-0 h-[35%] bg-[#8A2ECC] rounded" style="width: ${getPosition(skill.self)};"></div>
+
+      <!-- Manager Bar -->
+      <div class="absolute top-[55%] left-0 h-[35%] bg-[#071D49] rounded" style="width: ${getPosition(skill.manager)};"></div>
+
+      <!-- Benchmark line -->
+     <!-- <div class="absolute top-0 bottom-0 w-[4px] bg-[#0066F5]" style="left: ${getPosition(skill.benchmark)};"></div> -->
+    `;
+
+    row.appendChild(labelWrapper);
+    row.appendChild(graph);
+    container.appendChild(row);
+  });
+}
+
+
+    function renderRadarChart() {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      const labels = skillsData.map(skill => skill.label);
+      const selfData = skillsData.map(skill => skill.self);
+      const managerData = skillsData.map(skill => skill.manager);
+      const benchmarkData = skillsData.map(skill => skill.benchmark);
+      if (radarChart) radarChart.destroy();
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: { labels, datasets: [
+          { label: 'Self', data: selfData, borderColor: '#8A2ECC', backgroundColor: 'rgba(138, 46, 204, 0.2)', pointBackgroundColor: '#8A2ECC' },
+          { label: 'Manager', data: managerData, borderColor: '#071D49', backgroundColor: 'rgba(7, 29, 73, 0.2)', pointBackgroundColor: '#071D49' },
+          // { label: 'Role Benchmark', data: benchmarkData, borderColor: '#0066F5', backgroundColor: 'rgba(0, 102, 245, 0.2)',pointStyle:"rect", pointBackgroundColor: '#0066F5' }
+        ]},
+       options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    r: {
+      min: 0,
+      max: 3,
+      ticks: { stepSize: 1 }
+    }
+  },
+ plugins: {
+  legend: {
+    position: 'bottom',
+    align: 'center' // or 'center', or 'end'
+  }
+}
+}
+      });
+    }
+
+   function renderCards(data, containerId) {
+  const container = document.getElementById(containerId);
+  data.forEach(item => {
+    const div = document.createElement("div");
+    div.className = " border-l-4 border-[#071D49] px-4 py-2 rounded relative";
+
+    // Convert <br/> string into list items
+    const bulletPoints = item.description
+      .split('<br/>')
+      .map(p => `<li>${p}</li>`)
+      .join('');
+
+    div.innerHTML = `
+     <div class="flex justify-between items-center mb-1">
+  <div class="flex flex-col">
+     <span class="text-[10px]  font-bold text-gray-500">${item.competency.toUpperCase()}</span>
+    <span class="font-medium text-[#071D49]">${item.title}</span>
+  </div>
+</div>
+<ul class="text-gray-600 text-sm mt-1 list-disc ml-5">
+  ${bulletPoints}
+</ul>
+
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+    const toggleAccordion = (type) => {
+      const content = document.getElementById(`accordion-content-${type}`);
+      const arrow = document.getElementById(`accordion-arrow-${type}`);
+      content.classList.toggle("hidden");
+      arrow.classList.toggle("rotate-180");
+    };
+function switchView(view) {
+  const competencyView = document.getElementById("competency-view");
+  const detailedView = document.getElementById("detailed-view");
+  const CompetencyBtn = document.getElementById("CompetencyBtn");
+  const DetailedBtn = document.getElementById("DetailedBtn");
+  const viewSlider = document.getElementById("view-slider");
+const legendBox = document.getElementById("legends");
+
+console.log("the legend is this ",legendBox);
+  if (view === 'competency') {
+    competencyView?.classList.remove("hidden");
+    detailedView?.classList.add("hidden");
+     CompetencyBtn?.classList.add("text-white");
+ DetailedBtn?.classList.remove("text-white")
+      legendBox.classList.remove("hidden");
+    viewSlider.style.left = '0.25rem';  // same as left-1
+  } else if (view === 'detailed') {
+     legendBox.classList.add("hidden"); 
+    competencyView?.classList.add("hidden");
+    CompetencyBtn?.classList.remove("text-white");
+    CompetencyBtn?.classList.add("text-black");
+    DetailedBtn?.classList.add("text-white")
+    detailedView?.classList.remove("hidden");
+    viewSlider.style.left = '49%';
+   
+legendBox.classList.add("hidden");
+  }
+}
+function downloadModel() {
+  window.open('competency.pdf', '_blank');
+}
+
+    renderCards(strengths, "accordion-content-strengths");
+    renderCards(development, "accordion-content-development");
+  </script>
+</body>
+</html>
